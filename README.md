@@ -18,9 +18,7 @@ data ──┐
               │
               ▼
             evaluation (MultiBLiMP zero-shot, Belebele 4-shot, perplexity)
-              │
-              ▼
-            consolidated CSVs (one row per checkpoint)
+
 ```
 
 Every script takes its inputs via CLI flags or environment variables (`${CKPT_DIR}`, `${DATA_DIR}`, etc.). 
