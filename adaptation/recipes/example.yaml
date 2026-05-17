@@ -1,0 +1,51 @@
+# Recipe template for adaptation/train_peft.py via adaptation/launch/run_recipe.sh.
+#
+# Copy this file, edit the fields below (especially target_experts, dataset_path,
+# and learning_rate), and launch with:
+#
+#     bash adaptation/launch/run_recipe.sh adaptation/recipes/my_run.yaml
+#
+# Or in SLURM:
+#
+#     sbatch adaptation/launch/slurm_peft.sh adaptation/recipes/my_run.yaml
+#
+# Env-var dependencies inside this file (export them in your shell or .env):
+#   CKPT_DIR     - location of the base/M7 checkpoint
+#   DATA_DIR     - location of tokenized .npy data
+#   RUN_DIR      - where adapted checkpoints are written
+#   WANDB_ENTITY - your wandb entity
+
+# -------- model + tokenizer --------
+model_path:     ${CKPT_DIR}/seven-langs-stage1    # OLMoE-M7 (HF format)
+tokenizer_path: allenai/OLMoE-1B-7B-0924-Instruct
+
+# -------- experts to train --------
+# JSON dict mapping {layer_idx: [expert_idx, ...]}. Examples:
+#   SEFT (language-specific only):
+#     '{"15":[6,8,63,7,49,58],"14":[46,0,27,7,19,47]}'
+#   SSFT (SEFT + 5 globally-shared experts per layer):
+#     '{"15":[6,8,63,7,49,58,57,0,43,36,31],"14":[46,0,27,7,19,47,39,13,26,8,43]}'
+#   AEFT (all 64 experts in both final layers):
+#     '{"14":[0,1,...,63],"15":[0,1,...,63]}'
+# Generate per-language SEFT/SSFT sets from your OLMoE-M7 routing pickle via:
+#     python -m analysis.analysis select-experts --counts m7.pkl --out experts.json
+target_experts: '{"15":[6,8,63,7,49,58,57,0,43,36,31],"14":[46,0,27,7,19,47,39,13,26,8,43]}'
+train_routers:  true
+
+# -------- data --------
+dataset_path:   ${DATA_DIR}/low_resource/tokenized/ca/part-0-00000.npy
+
+# -------- training schedule --------
+num_epochs:     10
+batch_size:     16
+save_steps:     5000
+max_tokens:     300000000     # ~300M target-language tokens; bump to 800M for longer runs
+learning_rate:  4.0e-4        # sweep over {1e-5, 1e-4, 4e-4, 1e-3, 4e-3}, pick best val PPL
+
+# -------- output + wandb --------
+output_dir:     ${RUN_DIR}/peft/my_run
+wandb_project:  peft_runs
+wandb_entity:   ${WANDB_ENTITY}
+wandb_group:    ${WANDB_ENTITY}
+wandb_name:     my_run
+wandb_tags:     experiment1

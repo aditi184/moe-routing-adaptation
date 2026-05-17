@@ -1,0 +1,32 @@
+moe-routing-adaptation
+======================
+
+Code accompanying a study of multilingual routing dynamics in OLMoE-class
+Mixture-of-Experts language models and a parameter-efficient adaptation
+method for low-resource languages. Paper title and author information
+withheld pending paper status. Released under Apache License 2.0 (see LICENSE).
+
+This product includes software developed by:
+
+  - The Allen Institute for AI (https://allenai.org)
+    OLMo (https://github.com/allenai/OLMo), Apache License 2.0
+    The training library under `pretraining/olmo/`, the OLMoE-1B-7B-0924 model
+    (https://huggingface.co/allenai/OLMoE-1B-7B-0924), and the multilingual
+    training pipeline in `pretraining/` are derived from this project.
+
+  - EleutherAI (https://eleuther.ai)
+    lm-evaluation-harness (https://github.com/EleutherAI/lm-evaluation-harness),
+    MIT License. The MultiBLiMP and Belebele evaluation tasks driven by
+    `evaluation/` are defined in this project. We do not vendor it here;
+    install separately.
+
+  - The MoE community
+    OLMoE training infrastructure (Muennighoff et al., 2024 — "OLMoE: Open
+    Mixture-of-Experts Language Models") and the Megablocks-style dropless
+    routing implementation used by `pretraining/olmo/model.py`.
+
+Datasets used (not vendored):
+
+  - CulturaX (Nguyen et al., 2023), https://huggingface.co/datasets/uonlp/CulturaX
+  - MultiBLiMP (Jumelet et al., 2025), https://huggingface.co/datasets/jumelet/multiblimp
+  - Belebele (Bandarkar et al., 2024), https://huggingface.co/datasets/facebook/belebele
